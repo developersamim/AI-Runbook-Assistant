@@ -88,8 +88,12 @@ def main():
             outputs=[chatbot, context_markdown],
             api_name=False,
         )
+    # Grab the port Render gives you, or fall back to 7860 locally
+    port = int(os.environ.get("PORT", 7860))
 
     ui.launch(
+        server_name="0.0.0.0", # allows Render to detect the app
+        server_port=port,
         share=False,
         show_error=True,
         show_api=False
