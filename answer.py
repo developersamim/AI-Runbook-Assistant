@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_core.messages import SystemMessage, HumanMessage, convert_to_messages
 from langchain_core.documents import Document
 from langchain_openai import ChatOpenAI
@@ -8,14 +8,15 @@ from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+load_dotenv(override=False)
 
 PINECONE_API_KEY = os.environ["PINECONE_API_KEY"]
 PINECONE_INDEX_NAME = "langchain-chunks-index"
 PINECONE_NAMESPACE = "personal"
 
 RETRIEVAL_K = 10
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+# ONNX-based (no torch) so the app fits in Render's 512MB; same vectors as HuggingFace all-MiniLM-L6-v2
+embeddings = FastEmbedEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 pinecone = Pinecone(api_key=PINECONE_API_KEY)
 index = pinecone.Index(PINECONE_INDEX_NAME)
